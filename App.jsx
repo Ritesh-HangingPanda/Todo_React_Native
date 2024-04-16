@@ -3,7 +3,9 @@ import { Home } from './src';
 
 const App = () => {
   return (
+    <>
       <Home />
+    </>
   )
 }
 

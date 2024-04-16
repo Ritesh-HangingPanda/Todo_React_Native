@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
-import { Button, FlatList, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
+import Feather from 'react-native-vector-icons/Feather';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
+import { Button, FlatList, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
 
 const Home = () => {
     const [todo, setTodo] = useState([]);
-    const [inputType, setInputType] = useState({ task: '', edit: false, status: false });
+    const [inputTodo, setInputTodo] = useState('');
+    const [inputType, setInputType] = useState({ task: '', edit: false, status: false, id: uniqueId, check: false });
+
+    const uniqueId = () => parseInt(Date.now() * Math.random());
 
     const handleChange = (task) => {
         setInputType(prevState => ({
@@ -18,7 +27,7 @@ const Home = () => {
         if (inputType.task.trim() === '') {
             return console.warn('Kindly Add Task');
         }
-        setTodo([...todo, inputType]);
+        setTodo([...todo, { ...inputType, id: uniqueId() }]);
         setInputType({ task: '', edit: false, status: false });
     };
 
@@ -27,68 +36,124 @@ const Home = () => {
         setInputType({ task: '', edit: false, status: false });
     };
 
+    const handleDelete = (id) => {
+        const removedTodo = todo.filter(item => item.id !== id);
+        setTodo(removedTodo);
+    };
+
+    const handleUnChecked = (id) => {
+        const checkBoxTodo = todo.map(item => {
+            if (item.id === id) {
+                return { ...item, check: false };
+            }
+            return item;
+        });
+        setTodo(checkBoxTodo);
+    }
+    const handleChecked = (id) => {
+        const checkBoxTodo = todo.map(item => {
+            if (item.id === id) {
+                return { ...item, check: true };
+            }
+            return item;
+        });
+        setTodo(checkBoxTodo);
+    }
+
+    const handleToggle = (id) => {
+        const updatedTodo = todo.map(item => {
+            if (item.id === id) {
+                return { ...item, task: setInputTodo(item.task), edit: true };
+            }
+            return item;
+        });
+        setTodo(updatedTodo);
+    }
+
+    const handleEdit = (id) => {
+        const editTodo = todo.map(item => {
+            if (item.id === id) {
+                return { ...item, task: inputTodo, edit: false };
+            }
+            return item;
+        });
+        setTodo(editTodo);
+    };
+
     return (
-        <View style={styles.container}>
-            <StatusBar backgroundColor={'skyblue'} barStyle={'dark-content'} hidden={false} />
-            <Text style={styles.header}>Todo List</Text>
-            <View>
-                <TextInput
-                    style={styles.userInput}
-                    placeholder='Enter Task Here'
-                    value={inputType.task}
-                    onChangeText={(task) => handleChange(task)}
-                />
+        <View className='w-11/12 mx-auto'>
+            <StatusBar backgroundColor={'white'} barStyle={'dark-content'} hidden={false} />
+            <View className='flex flex-row justify-between items-center py-5'>
+                <Text className='text-3xl font-bold text-red-600'>Todo List</Text>
+                <TouchableOpacity>
+                    <MaterialIcons size={30} color="red" onPress={handleResetTodo} name='clear-all' />
+                </TouchableOpacity>
             </View>
-            <View style={styles.btnParent}>
-                <View style={styles.addbtn}>
-                    <Button
-                        color={'green'}
-                        title='Add'
-                        onPress={handleAddTodo}
+            <View className='relative flex flex-row items-center h-12 pl-3 justify-between outline-none border border-red-600 rounded-3xl overflow-hidden shadow-lg'>
+                <View className='max-w-[250px]'>
+                    <TextInput
+                        className='text-base'
+                        placeholder='Enter Task Here'
+                        value={inputType.task}
+                        onChangeText={(task) => handleChange(task)}
                     />
                 </View>
-                <View style={styles.resetbtn}>
-                    <Button
-                        color={'red'}
-                        title='Reset'
-                        onPress={handleResetTodo}
-                    />
-                </View>
+                <TouchableOpacity>
+                    <View className='bg-purple-400 text-white p-4 text-base font-medium'>
+                        <Entypo onPress={handleAddTodo} color={'white'} size={17} name='paper-plane'/>
+                    </View>
+                </TouchableOpacity>
             </View>
-            <View { ...(todo.length && styles.todoParent)}>
-                <FlatList
-                    data={todo}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item, index }) => (
-                        <View style={styles.todoList}>
-                            <Text style={styles.todoListItemNumber}>{index + 1}. </Text>
-                            <Text style={styles.todoListItemText}>{item.task}</Text>
-                            <View style={styles.icon}>
-                                <View>
-                                    <Text style={styles.editButton}>Edit</Text>
-                                </View>
-                            </View>
+            <FlatList
+                style={styles.flatList}
+                data={todo}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item, index }) => (
+                    <View className='flex flex-row items-center justify-between px-3 py-1'>
+                        <View className='w-[15%]'>
+                            {
+                                item.check
+                                    ?
+                                    (<AntDesign size={25} onPress={() => handleUnChecked(item.id)} color={'green'} name='check' />)
+                                    :
+                                    (<Fontisto size={15} onPress={() => handleChecked(item.id)} name='radio-btn-passive' />)
+                            }
                         </View>
-                    )}
-                />
-            </View>
-        </View >
+                        <View className='w-[55%]'>
+                            {item.edit ?
+                                (<TextInput
+                                    className='outline-none border px-10 rounded-md h-10'
+                                    value={inputTodo}
+                                    onChangeText={(text) => setInputTodo(text)}
+                                />)
+                                :
+                                (<Text className='text-lg'>{item.task}</Text>)
+                            }
+                        </View>
+                        <View className='w-[30%] flex flex-row justify-around'>
+                            {
+                                item.edit ?
+                                    (<TouchableOpacity onPress={() => handleEdit(item.id)}>
+                                        <Feather name='edit' size={25} color="blue" />
+                                    </TouchableOpacity>)
+                                    :
+                                    (<TouchableOpacity onPress={() => handleToggle(item.id)}>
+                                        <Feather name='edit' size={25} color="green" />
+                                    </TouchableOpacity>)
+                            }
+                            <TouchableOpacity onPress={() => handleDelete(item.id)}>
+                                <Feather name='trash-2' size={25} color="red" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
+            />
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingHorizontal: 10,
-        backgroundColor: 'skyblue',
-    },
-    header: {
-        fontSize: 40,
-        textAlign: 'center',
-        fontWeight: '700',
-        marginVertical: 10,
-        color: 'black',
-    },
+
     btnParent: {
         marginTop: 10,
         flexDirection: 'row',
@@ -109,12 +174,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         fontSize: 20,
     },
-    todoParent: {
-        borderColor: 'blue',
-        borderWidth: 1,
-        marginTop: 20,
-        paddingHorizontal: 10,
-        paddingVertical: 20
+    flatList: {
+        marginTop: 30
     },
     todoList: {
         flexDirection: 'row',
@@ -122,24 +183,20 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginBottom: 10,
     },
-    todoListItemNumber: {
-        fontSize: 35,
-        fontWeight: '700',
-    },
     todoListItemText: {
-        fontSize: 20,
+        fontSize: 20
     },
     icon: {
         flexDirection: 'row',
-        alignItems: 'center',
+        justifyContent: 'flex-end',
+        gap: 20
     },
-    editButton: {
-        fontSize: 15,
-        backgroundColor: 'green',
-        paddingVertical: 10,
-        paddingHorizontal: 7,
-        borderRadius: 100,
-        color: 'white',
+    editInput: {
+        fontSize: 20,
+        borderWidth: 1,
+        borderColor: 'gray',
+        padding: 5,
+        flex: 1,
     }
 });
 
