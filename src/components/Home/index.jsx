@@ -1,17 +1,11 @@
 import React, { useState } from 'react';
 import { Button, FlatList, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 
-interface IInputType {
-    task: string;
-    edit: boolean;
-    status: boolean;
-}
-
 const Home = () => {
-    const [todo, setTodo] = useState<IInputType[]>([]);
-    const [inputType, setInputType] = useState<IInputType>({ task: '', edit: false, status: false });
+    const [todo, setTodo] = useState([]);
+    const [inputType, setInputType] = useState({ task: '', edit: false, status: false });
 
-    const handleChange = (task: string) => {
+    const handleChange = (task) => {
         setInputType(prevState => ({
             ...prevState,
             task: task,
