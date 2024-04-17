@@ -4,8 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { Button, FlatList, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
+import { FlatList, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const Home = () => {
     const [todo, setTodo] = useState([]);
@@ -98,17 +97,18 @@ const Home = () => {
                         onChangeText={(task) => handleChange(task)}
                     />
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleAddTodo}>
                     <View className='bg-purple-400 text-white p-4 text-base font-medium'>
-                        <Entypo onPress={handleAddTodo} color={'white'} size={17} name='paper-plane'/>
+                        <Entypo color={'white'} size={17} name='paper-plane' />
                     </View>
                 </TouchableOpacity>
             </View>
+            
             <FlatList
-                style={styles.flatList}
+                className='mt-5'
                 data={todo}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item, index }) => (
+                renderItem={({ item }) => (
                     <View className='flex flex-row items-center justify-between px-3 py-1'>
                         <View className='w-[15%]'>
                             {
@@ -153,51 +153,6 @@ const Home = () => {
 }
 
 const styles = StyleSheet.create({
-
-    btnParent: {
-        marginTop: 10,
-        flexDirection: 'row',
-        justifyContent: 'center'
-    },
-    addbtn: {
-        paddingHorizontal: 5,
-        width: 120,
-    },
-    resetbtn: {
-        paddingHorizontal: 5,
-        width: 120,
-    },
-    userInput: {
-        borderColor: 'blue',
-        borderWidth: 1,
-        marginVertical: 5,
-        paddingHorizontal: 10,
-        fontSize: 20,
-    },
-    flatList: {
-        marginTop: 30
-    },
-    todoList: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 10,
-    },
-    todoListItemText: {
-        fontSize: 20
-    },
-    icon: {
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        gap: 20
-    },
-    editInput: {
-        fontSize: 20,
-        borderWidth: 1,
-        borderColor: 'gray',
-        padding: 5,
-        flex: 1,
-    }
 });
 
 export default Home;
