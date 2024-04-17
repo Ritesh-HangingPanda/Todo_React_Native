@@ -77,7 +77,7 @@ const Home = () => {
     const handleEdit = (id) => {
         const editTodo = allTodos.map(item => {
             if (item.id === id) {
-                return { ...item, task: inputTodo, edit: false };
+                return { ...item, task: inputTodo, edit: false, status:false };
             }
             return item;
         });
