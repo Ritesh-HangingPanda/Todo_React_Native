@@ -1,10 +1,11 @@
 import React from 'react'
-import Home from './src/screen/Home'
-
+import { Home, About } from './src'
 
 const App = () => {
   return (
-      <Home/>
+    <>
+      <Home />
+    </>
   )
 }
 
