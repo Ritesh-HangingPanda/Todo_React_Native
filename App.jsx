@@ -1,12 +1,17 @@
-import React from 'react'
-import { Home, About } from './src'
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { Home, About } from './src';
 
-const App = () => {
+export default function App() {
+  const Drawer = createDrawerNavigator();
+
   return (
-    <>
-      <Home />
-    </>
-  )
+    <NavigationContainer>
+      <Drawer.Navigator initialRouteName="Home">
+        <Drawer.Screen name="Home" component={Home} />
+        <Drawer.Screen name="About" component={About} />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
 }
-
-export default App;
